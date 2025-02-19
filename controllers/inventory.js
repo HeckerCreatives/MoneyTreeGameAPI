@@ -32,6 +32,7 @@ exports.getgameinventory = async (req, res) => {
                 fruitcollection: item.fruitcollection,
                 dailyclaim: item.dailyclaim,
                 totalaccumulated: item.totalaccumulated,
+                dailyaccumulated: item.dailyaccumulated,
                 totalincome: item.totalincome,
                 limittotal: creaturelimit,
                 limitdaily: limitperday
@@ -69,6 +70,21 @@ exports.senddaily = async (req, res) => {
 
         Plan.fruitcollection = Math.min(Plan.fruitcollection + Number(pts), 100);
 
+
+
+            const bank = await Bank.findOne({ type: Plan.type });
+
+            if (!bank) {
+                console.log(`Bank type ${Plan.type} not found for ${username}`);
+                return null; 
+            }
+
+            const creaturelimit = (parseInt(Plan.price) * bank.profit) + parseInt(Plan.price);
+            const limitperday = creaturelimit / bank.duration;
+
+
+
+            Plan.dailyaccumulated = (Plan.fruitcollection / 100) * limitperday;
 
         await Plan.save();
 
