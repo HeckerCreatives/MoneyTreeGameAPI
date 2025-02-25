@@ -15,6 +15,10 @@ const inventoryShema = new mongoose.Schema(
             type: Number,
             index: true // Automatically creates an index on 'amount'
         },
+        profit: {
+            type: Number,
+            index: true // Automatically creates an index on 'amount'
+        },
         bankname: {
             type: String,
             index: true

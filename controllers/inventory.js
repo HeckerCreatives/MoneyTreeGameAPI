@@ -15,15 +15,9 @@ exports.getgameinventory = async (req, res) => {
         const totalplans = data.length;
 
         const finaldata = await Promise.all(data.map(async (item, index) => {
-            const bank = await Bank.findOne({ type: item.type });
 
-            if (!bank) {
-                console.log(`Bank type ${item.type} not found for ${username}`);
-                return null; 
-            }
-
-            const creaturelimit = (parseInt(item.price) * bank.profit) + parseInt(item.price);
-            const limitperday = creaturelimit / bank.duration;
+            const creaturelimit = (parseInt(item.price) * item.profit) + parseInt(item.price);
+            const limitperday = creaturelimit / item.duration;
 
             return {
                 plannumber: index + 1,
