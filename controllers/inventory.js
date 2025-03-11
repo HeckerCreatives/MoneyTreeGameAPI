@@ -1,6 +1,7 @@
 const { default: mongoose } = require("mongoose")
 const Inventory = require("../models/Inventory");
 const Bank = require("../models/Bank");
+const Weather = require("../models/Weather");
 exports.getgameinventory = async (req, res) => {
     const { id, username } = req.user;
 
@@ -12,7 +13,21 @@ exports.getgameinventory = async (req, res) => {
             return res.json({ message: "failed", data: "No inventory found" });
         }
 
+        const weather = await Weather.findOne()
+            .then(data => data)
+            .catch(err => {
+                console.log(`Weather not found for ${username}. Error: ${err}`);
+                return null;
+            });
+
+            
+
         const totalplans = data.length;
+
+        const weatherdata = {
+            weather: weather.name,
+            sound: weather.sound
+        }
 
         const finaldata = await Promise.all(data.map(async (item, index) => {
 
@@ -38,7 +53,7 @@ exports.getgameinventory = async (req, res) => {
             return acc;
         }, {});
 
-        return res.json({ message: "success", totalplans, data: formattedData });
+        return res.json({ message: "success", weatherdata, totalplans, data: formattedData });
     } catch (err) {
         console.log(`There's a problem getting the inventory for ${username}. Error ${err}`);
         return res.json({ message: "bad-request", data: "There's a problem getting the inventory. Please contact customer support." });
@@ -58,6 +73,10 @@ exports.senddaily = async (req, res) => {
         const Plan = await Inventory.findOne({ _id: new mongoose.Types.ObjectId(planid), owner: new mongoose.Types.ObjectId(id)});
         if (!Plan) {
             return res.json({ message: "failed", data: 'Plan not found' });
+        }
+
+        if (Plan.totalaccumulated >= Plan.limittotal) {
+            return res.json({ message: "failed", data: 'Plan limit reached' });
         }
 
         Plan.fruitcollection = Number(Plan.fruitcollection) || 0;
@@ -97,6 +116,10 @@ exports.dailyClaim = async (req, res) => {
         const plan = await Inventory.findOne({ _id: new mongoose.Types.ObjectId(planid), owner: new mongoose.Types.ObjectId(id)});
         if (!plan) {
             return res.json({ message: "failed", data: 'Plan not found' });
+        }
+
+        if(plan.totalaccumulated >= plan.limittotal) {
+            return res.json({ message: "failed", data: 'Plan limit reached' });
         }
 
         if(plan.fruitcollection < 100) {
