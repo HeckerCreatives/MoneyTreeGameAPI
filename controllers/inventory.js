@@ -2,6 +2,7 @@ const { default: mongoose } = require("mongoose")
 const Inventory = require("../models/Inventory");
 const Bank = require("../models/Bank");
 const Weather = require("../models/Weather");
+const Dailyclaim = require("../models/Dailyclaim");
 exports.getgameinventory = async (req, res) => {
     const { id, username } = req.user;
 
@@ -156,6 +157,12 @@ exports.dailyClaim = async (req, res) => {
         const limitperday = creaturelimit / bank.duration;
         plan.dailyclaim = 1;
         plan.totalaccumulated += limitperday;
+
+        await Dailyclaim.create([{
+            owner: new mongoose.Types.ObjectId(id),
+            inventory: new mongoose.Types.ObjectId(planid),
+            amount: limitperday
+        }], { session });
 
         await plan.save({ session });
         await session.commitTransaction();
