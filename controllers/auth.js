@@ -14,6 +14,7 @@ const privateKey = fs.readFileSync(path.resolve(__dirname, "../keys/private-key.
 const { default: mongoose } = require("mongoose");
 const Userwallets = require("../models/Userwallets");
 const StaffUserwallets = require("../models/Staffuserwallets");
+const Inventoryhistory = require("../models/Inventoryhistory");
 
 const encrypt = async password => {
     const salt = await bcrypt.genSalt(10);
@@ -271,6 +272,12 @@ exports.gameidlogin = async(req, res) => {
 
             const token = await encrypt(privateKey)
 
+            const tempinventoryhistory = await Inventoryhistory.findOne({
+                owner: new mongoose.Types.ObjectId(user._id),
+                type: { $regex: /Buy/, $options: 'i' }
+            }).sort({ amount: -1 });
+
+            console.log(`tempinventoryhistory: ${tempinventoryhistory}`)
             await Users.findByIdAndUpdate({_id: user._id}, {$set: { gametoken: token }}, { new: true })
             .then(async () => {
                 const payload = { id: user._id, username: user.username, status: user.status, gametoken: token, auth: "player" }
@@ -286,6 +293,7 @@ exports.gameidlogin = async(req, res) => {
 
                 return res.json({message: "success", data: {
                     auth: "player",
+                    rank: !tempinventoryhistory ? "Free" : tempinventoryhistory.bankname,
                     token: jwtoken
                 }})
             })

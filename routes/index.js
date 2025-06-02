@@ -2,6 +2,7 @@ const routers = app => {
     console.log("Routers are all available");
 
     app.use("/auth", require("./auth"))
+    app.use("/event", require("./event"))
     app.use("/inventory", require("./inventory"))
     app.use("/leaderboard", require("./leaderboard"))
     app.use("/maintenance", require("./maintenance"))

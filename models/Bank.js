@@ -25,10 +25,13 @@ const BankSchema = new mongoose.Schema(
         },
         b1t1: {
             type: String
+        },
+        islocked: {
+            type: String
         }
     },
     {
-        timestamps: true,
+        tiimestamps: true,
     }
 )
 
