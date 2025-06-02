@@ -6,6 +6,14 @@ const leaderboardHistorySchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: "Users"
         },
+        eventname: {
+            type: String,
+            required: true
+        },
+        index: {
+            type: Number,
+            required: true
+        },
         amount: {
             type: Number
         },

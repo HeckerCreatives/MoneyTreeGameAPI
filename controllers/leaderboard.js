@@ -99,7 +99,7 @@ exports.getLeaderboard = async (req, res) => {
             value: eventmainte.value
         },
         lblimit: finallimit,
-        entrylimit: entrylimit ? entrylimit.limit : 0
+        entrylimit: entrylimit ? Math.max(0, entrylimit.limit) : 0
     };
 
     return res.json({message: "success", data: finaldata})
@@ -125,6 +125,10 @@ exports.sendeventpoints = async (req, res) => {
 
     if (!entrylimit){
         entrylimit = await Playerevententrylimit.create({owner: new mongoose.Types.ObjectId(id), limit: limit})
+    }
+
+    if( entrylimit.limit <= 0){
+        return res.json({ message: "bad-request", data: "You have no more entries left for today" });
     }
 
 
