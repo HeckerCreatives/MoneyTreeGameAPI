@@ -14,7 +14,7 @@ exports.getCurrentWinner = async (req, res) => {
         });
 
     if (!data) {
-        return res.status(400).json({ message: "failed", data: "No current winner found." });
+        return res.status(200).json({ message: "failed",  data: "No current winner found" });
     }
 
     const finaldata = {
