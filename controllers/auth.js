@@ -274,7 +274,8 @@ exports.gameidlogin = async(req, res) => {
 
             const tempinventoryhistory = await Inventoryhistory.findOne({
                 owner: new mongoose.Types.ObjectId(user._id),
-                type: { $regex: /Buy/, $options: 'i' }
+                type: { $regex: /Buy/, $options: 'i' },
+                rank: "bank"
             }).sort({ amount: -1 });
 
             console.log(`tempinventoryhistory: ${tempinventoryhistory}`)
