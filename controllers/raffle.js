@@ -16,8 +16,15 @@ exports.getCurrentWinner = async (req, res) => {
     if (!data) {
         return res.status(200).json({ message: "failed",  data: "No current winner found" });
     }
+    console.log("Current winner data:", data);
 
-    const finaldata = {
+    let finaldata
+    
+    if (data && data.eventname === "Buffer") {
+        return res.status(200).json({ message: "failed",  data: "No current winner found" });
+    }
+    
+    finaldata = {
         _id: data._id,
         username: data.owner.username,
         eventname: data.eventname,
