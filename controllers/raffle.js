@@ -6,7 +6,7 @@ exports.getCurrentWinner = async (req, res) => {
 
     const data = await RaffleWinner.findOne({})
         .populate("owner", "username")
-        .sort({ index: -1 })
+        .sort({ createdAt: -1 })
         .then(data => data)
         .catch(err => {
             console.error("Error fetching current winner:", err);
